@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "225379235097",
+    "project_id": "the-radja-kuphie",
+    "storage_bucket": "the-radja-kuphie.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:225379235097:android:e80034fd10a6815b4a4188",
+        "android_client_info": {
+          "package_name": "com.azis.radjakuphieapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLv5G_cBy0knqlJG_N_rxBldpf1MYKH20"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
