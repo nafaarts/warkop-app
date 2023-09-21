@@ -1,7 +1,10 @@
 const validateEmail = (email) => {
-    return String(email)
-    .toLocaleLowerCase()
-    .match(/^\S+@\S+\.\S+$/)?.length === 1;
-  };
+    var regex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    return regex.test(String(email).toLocaleLowerCase());
+};
 
-export {validateEmail}
+const min = (text, n) => {
+    return text.length >= n;
+};
+
+export { validateEmail, min };

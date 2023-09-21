@@ -1,25 +1,12 @@
-import { View, Text, Alert, Image, FlatList, Pressable } from "react-native";
+import { View, Text, Alert, Image, Pressable } from "react-native";
 import React from "react";
 import GuestLayout from "../components/layouts/GuestLayout";
 import useAuth from "../stores/useAuth";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import useNotification from "../stores/useNotification";
 
-const NavCard = ({ title, icon, onPress }) => {
-    return (
-        <Pressable
-            className="flex-row items-center px-6 py-4 bg-yellow-500 w-full mb-3 rounded-md"
-            style={{ gap: 10 }}
-            onPress={onPress}
-        >
-            <Ionicons name={icon} size={18} />
-            <Text>{title}</Text>
-        </Pressable>
-    );
-};
-
-const Dashboard = () => {
+export default () => {
     const { user, logout } = useAuth();
     const { deviceToken } = useNotification();
 
@@ -32,16 +19,13 @@ const Dashboard = () => {
             {
                 text: "Ya",
                 style: "default",
-                onPress: () => logout(user.uid, deviceToken),
+                onPress: () => logout(user?.uid, deviceToken),
             },
-            {
-                text: "Tidak",
-                style: "cancel",
-            },
+            { text: "Tidak", style: "cancel" },
         ]);
     };
 
-    return (
+    return user !== null ? (
         <GuestLayout>
             <View className="flex-1 justify-center items-center">
                 <View style={{ marginBottom: 50 }}>
@@ -61,7 +45,9 @@ const Dashboard = () => {
                         <NavCard
                             title="Pembayaran Pesanan"
                             icon="cart"
-                            onPress={() => router.push("/orders-tables")}
+                            onPress={() => {
+                                router.push("/cashier/tables");
+                            }}
                         />
                     )}
 
@@ -69,7 +55,9 @@ const Dashboard = () => {
                         <NavCard
                             title="Laporan Penjualan"
                             icon="md-bar-chart"
-                            onPress={() => router.push("/report-index")}
+                            onPress={() => {
+                                router.push("/report");
+                            }}
                         />
                     )}
 
@@ -77,7 +65,9 @@ const Dashboard = () => {
                         <NavCard
                             title="Pesanan"
                             icon="cart"
-                            onPress={() => router.push("/chef-pesanan")}
+                            onPress={() => {
+                                router.push("/orders");
+                            }}
                         />
                     )}
 
@@ -85,7 +75,9 @@ const Dashboard = () => {
                         <NavCard
                             title="Data Menu"
                             icon="fast-food"
-                            onPress={() => router.push("/chef-menu")}
+                            onPress={() => {
+                                router.push("/menu");
+                            }}
                         />
                     )}
 
@@ -93,21 +85,27 @@ const Dashboard = () => {
                         <NavCard
                             title="Manajemen User"
                             icon="people"
-                            onPress={() => router.push("/user-index")}
+                            onPress={() => {
+                                router.push("/users");
+                            }}
                         />
                     )}
                     {IS_ADMIN && (
                         <NavCard
                             title="Manajemen Menu"
                             icon="fast-food"
-                            onPress={() => router.push("/menu-index")}
+                            onPress={() => {
+                                router.push("/menu");
+                            }}
                         />
                     )}
                     {IS_ADMIN && (
                         <NavCard
-                            title="Konfigurasi"
-                            icon="settings"
-                            onPress={() => router.push("/configuration")}
+                            title="Jumlah Meja"
+                            icon="grid"
+                            onPress={() => {
+                                router.push("/configuration");
+                            }}
                         />
                     )}
                     <NavCard
@@ -121,7 +119,20 @@ const Dashboard = () => {
                 </Text>
             </View>
         </GuestLayout>
+    ) : (
+        <Redirect href="/" replace />
     );
 };
 
-export default Dashboard;
+const NavCard = ({ title, icon, onPress }) => {
+    return (
+        <Pressable
+            className="flex-row items-center px-6 py-4 bg-yellow-500 w-full mb-3 rounded-md"
+            style={{ gap: 10 }}
+            onPress={onPress}
+        >
+            <Ionicons name={icon} size={18} />
+            <Text>{title}</Text>
+        </Pressable>
+    );
+};

@@ -12,6 +12,7 @@ export async function sendPushNotification(message) {
     //     body: "And here is the body!",
     //     data: { someData: "goes here" },
     // };
+
     await fetch("https://exp.host/--/api/v2/push/send", {
         method: "POST",
         headers: {
@@ -49,8 +50,6 @@ export async function registerForPushNotificationsAsync() {
         token = await Notifications.getExpoPushTokenAsync({
             projectId: Constants?.expoConfig?.extra?.eas?.projectId,
         });
-    } else {
-        alert("Must use physical device for Push Notifications");
     }
 
     return token?.data;
@@ -59,7 +58,6 @@ export async function registerForPushNotificationsAsync() {
 const useNotification = create((set) => ({
     deviceToken: null,
     setDeviceToken: (deviceToken) => {
-        // console.log("token device dibuat.", deviceToken);
         set({ deviceToken });
     },
 }));

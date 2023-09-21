@@ -2,23 +2,28 @@ import { View, Text, Image } from "react-native";
 import React from "react";
 import GuestLayout from "../components/layouts/GuestLayout";
 import PrimaryButton from "../components/button/PrimaryButton";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 import useNotification, {
     registerForPushNotificationsAsync,
 } from "../stores/useNotification";
+import useCart from "../stores/userCart";
 import useAuth from "../stores/useAuth";
 
-const Index = () => {
-    const { user } = useAuth();
+export default () => {
     const { setDeviceToken } = useNotification();
+    const { resetCart } = useCart();
+
+    const { user } = useAuth();
 
     React.useEffect(() => {
+        resetCart();
+
         registerForPushNotificationsAsync().then((token) =>
             setDeviceToken(token)
         );
     }, []);
 
-    return (
+    return user === null ? (
         <GuestLayout>
             <View className="flex-1 justify-center items-center">
                 <View style={{ marginBottom: 50 }}>
@@ -34,18 +39,24 @@ const Index = () => {
                     </Text>
                 </View>
                 <View className="w-full mb-4">
-                    <View className="mb-4">
-                        <PrimaryButton
-                            label="Pelayan"
-                            icon="user"
-                            style={{ marginBottom: 5 }}
-                            onPress={() => router.push("waiters-dashboard")}
-                        />
-                    </View>
+                    <PrimaryButton
+                        label="Buat Pesanan"
+                        icon="plus"
+                        className="mb-3"
+                        onPress={() => router.push("/waiters/tables")}
+                    />
+
+                    <PrimaryButton
+                        label="Riwayat Pesanan"
+                        icon="history"
+                        className="mb-3"
+                        onPress={() => router.push("/orders")}
+                    />
+
                     <PrimaryButton
                         label="Login"
                         icon="sign-in"
-                        onPress={() => router.push("login")}
+                        onPress={() => router.push("/auth/login")}
                     />
                 </View>
                 <Text className="text-xs text-gray-400">
@@ -53,7 +64,7 @@ const Index = () => {
                 </Text>
             </View>
         </GuestLayout>
+    ) : (
+        <Redirect href="/dashboard" replace />
     );
 };
-
-export default Index;

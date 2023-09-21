@@ -8,59 +8,59 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 const handleLogin = async (set, email, password, deviceToken) => {
     set({ loading: true });
 
-    try {
-        const userCredential = await signInWithEmailAndPassword(
-            FIREBASE_AUTH,
-            email,
-            password
-        );
+    const userCredential = await signInWithEmailAndPassword(
+        FIREBASE_AUTH,
+        email,
+        password
+    );
 
-        const user = userCredential.user;
-        const customClaims = await user.getIdTokenResult();
+    const user = userCredential.user;
+    const customClaims = await user.getIdTokenResult();
 
-        if (customClaims) {
-            const userData = {
-                uid: user.uid,
-                name: user.displayName,
-                email: user.email,
-                role: customClaims.claims.account_level,
-            };
+    if (customClaims) {
+        const userData = {
+            uid: user.uid,
+            name: user.displayName,
+            email: user.email,
+            role: customClaims.claims.account_level,
+        };
 
-            set({ user: userData });
+        set({ loading: false, user: userData });
 
-            if (deviceToken) {
-                const getCurrentToken = await getDoc(
-                    doc(FIREBASE_STORE, "devices", userData.uid)
-                );
+        if (deviceToken) {
+            const getCurrentToken = await getDoc(
+                doc(FIREBASE_STORE, "devices", userData.uid)
+            );
 
-                await setDoc(doc(FIREBASE_STORE, "devices", userData.uid), {
-                    deviceToken: [
-                        ...(getCurrentToken.data()?.deviceToken || []),
-                        deviceToken,
-                    ],
-                });
-            }
+            await setDoc(doc(FIREBASE_STORE, "devices", userData.uid), {
+                deviceToken: [
+                    ...(getCurrentToken.data()?.deviceToken || []),
+                    deviceToken,
+                ],
+            });
         }
-    } catch (error) {
-        set({ loading: false });
-        throw error;
     }
+
+    set({ loading: false });
 };
 
 const handleLogout = async (set, uid, deviceToken) => {
-    set({ loading: true });
+    if (uid) {
+        const getCurrentToken = await getDoc(
+            doc(FIREBASE_STORE, "devices", uid)
+        );
+        const tokens = getCurrentToken
+            .data()
+            ?.deviceToken?.filter((token) => token !== deviceToken);
 
-    const getCurrentToken = await getDoc(doc(FIREBASE_STORE, "devices", uid));
-    const tokens = getCurrentToken
-        .data()
-        ?.deviceToken?.filter((token) => token !== deviceToken);
+        await setDoc(doc(FIREBASE_STORE, "devices", uid), {
+            deviceToken: tokens ?? null,
+        });
 
-    await setDoc(doc(FIREBASE_STORE, "devices", uid), {
-        deviceToken: tokens,
-    });
+        await signOut(FIREBASE_AUTH);
+    }
 
-    await signOut(FIREBASE_AUTH);
-    set({ user: null, loading: false });
+    set({ user: null });
 };
 
 const useAuth = create(
