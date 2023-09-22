@@ -1,11 +1,4 @@
-import {
-    View,
-    Text,
-    FlatList,
-    ImageBackground,
-    Alert,
-    Dimensions,
-} from "react-native";
+import { View, Text, FlatList, ImageBackground, Alert } from "react-native";
 import React from "react";
 import AppLayout from "../../components/layouts/AppLayout";
 import {
@@ -13,7 +6,6 @@ import {
     deleteDoc,
     doc,
     getDocs,
-    orderBy,
     query,
     where,
 } from "firebase/firestore";
@@ -32,7 +24,9 @@ export default () => {
     const [search, setSearch] = React.useState("");
 
     const filteredMenu = () => {
-        return menus.filter((item) => item.name.toLowerCase().includes(search));
+        return menus.filter((item) =>
+            item.name.toLowerCase().includes(search.toLocaleLowerCase())
+        );
     };
 
     const getData = async () => {
@@ -96,12 +90,7 @@ const MenuCard = ({ menu, handleDelete }) => {
     const { user } = useAuth();
 
     return (
-        <View
-            className="p-3 bg-yellow-200 rounded"
-            style={{
-                maxWidth: Dimensions.get("window").width / 2 - 20,
-            }}
-        >
+        <View className="flex-1 p-3 bg-yellow-200 rounded">
             <View className="overflow-hidden rounded mb-3">
                 <ImageBackground
                     source={{

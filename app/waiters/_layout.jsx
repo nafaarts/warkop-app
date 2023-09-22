@@ -22,6 +22,18 @@ export default () => {
                     title: "Buat Pesanan",
                 }}
             />
+            <Stack.Screen
+                name="cart"
+                options={{
+                    title: "Pesanan",
+                }}
+            />
+            <Stack.Screen
+                name="menu"
+                options={{
+                    title: "Data Menu",
+                }}
+            />
         </Stack>
     );
 };

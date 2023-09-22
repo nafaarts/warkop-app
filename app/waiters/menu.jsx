@@ -17,6 +17,7 @@ import PrimaryButton from "../../components/button/PrimaryButton";
 import SecondaryButton from "../../components/button/SecondaryButton";
 import useCart from "../../stores/userCart";
 import { router } from "expo-router";
+import TextInput from "../../components/form/TextInput";
 
 const menuCollectionRef = collection(FIREBASE_STORE, "menu");
 
@@ -24,8 +25,16 @@ export default () => {
     const { addOrder } = useCart();
 
     const [menus, setMenus] = React.useState([]);
+    const [search, setSearch] = React.useState("");
+
     const [selectedMenu, setSelectedMenu] = React.useState({});
     const [showModal, setShowModal] = React.useState(false);
+
+    const filteredMenu = () => {
+        return menus.filter((item) =>
+            item.name.toLowerCase().includes(search.toLocaleLowerCase())
+        );
+    };
 
     const getData = async () => {
         const data = await getDocs(menuCollectionRef);
@@ -42,7 +51,7 @@ export default () => {
 
         Alert.alert("Berhasil", "Menu berhasil ditambah!");
 
-        router.replace("/waiters/cart");
+        router.back();
     };
 
     React.useEffect(() => {
@@ -52,8 +61,12 @@ export default () => {
     return (
         <>
             <AppLayout>
+                <TextInput
+                    placeholder="Cari nama menu"
+                    onChangeText={(value) => setSearch(value)}
+                />
                 <FlatList
-                    data={menus}
+                    data={filteredMenu()}
                     renderItem={(menu) => (
                         <MenuCard
                             menu={menu}
